@@ -16,7 +16,7 @@ public final class TableDataFactory {
 
     private final Random random = new Random();
 
-    private final WordBag bag = new WordBag(minWordLen, maxWordLen, 100000);
+    private final WordBag bag = new WordBag(minWordLen, maxWordLen, 10000);
 
     private final StringBuilder sb = new StringBuilder();
 
