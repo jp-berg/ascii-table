@@ -18,6 +18,8 @@ public final class TableDataFactory {
 
     private final WordBag bag = new WordBag(minWordLen, maxWordLen, 100000);
 
+    private final StringBuilder sb = new StringBuilder();
+
     public TableDataFactory(){}
 
     private String[] generateRandomHeader(final int colNum){
@@ -34,9 +36,10 @@ public final class TableDataFactory {
 
     public String generateRandomDatum(){
         int limit = randomInt(minDataWords, maxDataWords);
-        return Stream.generate(() -> bag.next())
-                .limit(limit)
-                .collect(Collectors.joining(" "));
+        sb.setLength(0);
+        sb.ensureCapacity(limit*maxWordLen);
+        for(int i = 0; i < limit; i++){sb.append(bag.next()).append(' ');}
+        return sb.delete(sb.length() - 1, sb.length()).toString();
 
     }
 
