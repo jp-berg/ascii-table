@@ -3,6 +3,7 @@ package com.github.freva.asciitable.jmh;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jspecify.annotations.NullMarked;
 
+import java.nio.CharBuffer;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,8 +11,7 @@ import java.util.stream.Stream;
 @NullMarked
 public final class TableDataFactory {
 
-    private int minHeaderLen = 5, maxHeaderLen = 10,
-            minDataWordLen = 3, maxDataWordLen = 15,
+    private int minWordLen = 3, maxWordLen = 15,
             minDataWords = 1, maxDataWords = 25;
 
     private final Random random = new Random();
@@ -21,14 +21,26 @@ public final class TableDataFactory {
     private String[] generateRandomHeader(final int colNum){
         String[] header = new String[colNum];
         for(int i = 0; i < colNum; i++){
-            header[i] = RandomStringUtils.insecure().nextAlphabetic(minHeaderLen, maxHeaderLen);
+            header[i] = String.valueOf(randomLowercase(minWordLen, maxWordLen));
         }
         return header;
     }
 
-    private String generateRandomDatum(){
-        int limit = random.nextInt(maxDataWords - minDataWords) + minDataWords;
-        return Stream.generate(() -> RandomStringUtils.insecure().nextAlphabetic(minDataWordLen, maxDataWordLen))
+    private int randomInt(int min, int max){
+        return random.nextInt(max - min) + min;
+    }
+
+    public CharBuffer randomLowercase(int minLen, int maxLen){
+        char[] chars = new char[randomInt(minLen, maxLen)];
+        for(int i = 0; i < chars.length; i++){
+            chars[i] = (char) (Math.random()*26 + 'a');
+        }
+        return CharBuffer.wrap(chars);
+    }
+
+    public String generateRandomDatum(){
+        int limit = randomInt(minDataWords, maxDataWords);
+        return Stream.generate(() -> randomLowercase(minWordLen, maxWordLen))
                 .limit(limit)
                 .collect(Collectors.joining(" "));
 
@@ -50,23 +62,13 @@ public final class TableDataFactory {
         return new TableData(header, data);
     }
 
-    public TableDataFactory setMinHeaderLen(int minHeaderLen) {
-        this.minHeaderLen = minHeaderLen;
+    public TableDataFactory setMaxWordLen(int maxWordLen) {
+        this.maxWordLen = maxWordLen;
         return this;
     }
 
-    public TableDataFactory setMaxHeaderLen(int maxHeaderLen) {
-        this.maxHeaderLen = maxHeaderLen;
-        return this;
-    }
-
-    public TableDataFactory setMaxDataWordLen(int maxDataWordLen) {
-        this.maxDataWordLen = maxDataWordLen;
-        return this;
-    }
-
-    public TableDataFactory setMinDataWordLen(int minDataWordLen) {
-        this.minDataWordLen = minDataWordLen;
+    public TableDataFactory setMinWordLen(int minWordLen) {
+        this.minWordLen = minWordLen;
         return this;
     }
 
