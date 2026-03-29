@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @State(Scope.Thread)
 public class ExecutionPlan {
 
-    private static final int noStoredElements = 10000;
+    private static final int noStoredElements = 5000;
 
     private int currentPos = 0;
 
