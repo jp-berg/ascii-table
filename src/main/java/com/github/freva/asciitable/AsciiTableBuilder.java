@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 public class AsciiTableBuilder {
 
     private String lineSeparator = System.lineSeparator();
-    private @Nullable Character[] border = AsciiTable.BASIC_ASCII;
+    private char[] border = AsciiTable.BASIC_ASCII;
     private @Nullable Styler styler;
     private @Nullable String @Nullable[] header;
     private @Nullable String @Nullable[] footer;
@@ -32,7 +32,7 @@ public class AsciiTableBuilder {
     }
 
     /** Set the table border style. Default is {@link AsciiTable#BASIC_ASCII}. */
-    public AsciiTableBuilder border(@Nullable Character[] border) {
+    public AsciiTableBuilder border(char[] border) {
         this.border = Objects.requireNonNull(border, "border cannot be null");
         return this;
     }

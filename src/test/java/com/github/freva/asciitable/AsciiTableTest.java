@@ -674,7 +674,7 @@ public class AsciiTableTest {
         String[] headers = {"Lorem", "Ipsum", "Dolor", "Sit"};
         String[][] data = {{"11", "12", "13"}, {"21", "22"}, {"31", "32", "33", "34"}};
         assertThrows(IllegalArgumentException.class,
-                () -> AsciiTable.getTable(new Character[10], headers, null, data));
+                () -> AsciiTable.getTable(new char[10], headers, null, data));
     }
 
     @Test

@@ -21,25 +21,34 @@ public class AsciiTable {
     private static final int PADDING = 1;
     private static final char ELLIPSIS = '…';
 
-    public static final @Nullable Character[] NO_BORDERS = new Character[29];
+    public static final char EMPTY = 0;
 
-    public static final Character[] BASIC_ASCII = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
+    public static final char[] NO_BORDERS = new char[29];
+
+    static {
+        char[] c = new char[1];
+        if(EMPTY != c[0]){
+            throw new RuntimeException("Oh");
+        }
+    }
+
+    public static final char[] BASIC_ASCII = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
             '+', '+', '|', '|', '|', '+', '-', '+', '+', '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
 
-    public static final @Nullable Character[] BASIC_ASCII_NO_DATA_SEPARATORS = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
-            '+', '+', '|', '|', '|', null, null, null, null, '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
+    public static final char[] BASIC_ASCII_NO_DATA_SEPARATORS = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
+            '+', '+', '|', '|', '|', EMPTY, EMPTY, EMPTY, EMPTY, '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
 
-    public static final @Nullable Character[] BASIC_ASCII_NO_DATA_SEPARATORS_NO_OUTSIDE_BORDER = {null, null, null, null, null,
-            '|', null, null, '-', '+', null, null, '|', null, null, null, null, null, null, '-', '+', null, null, '|', null, null, null, null, null};
+    public static final char[] BASIC_ASCII_NO_DATA_SEPARATORS_NO_OUTSIDE_BORDER = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+            '|', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
-    public static final @Nullable Character[] BASIC_ASCII_NO_OUTSIDE_BORDER = {null, null, null, null, null, '|', null,
-            null, '-', '+', null, null, '|', null, null, '-', '+', null, null, '-', '+', null, null, '|', null, null, null, null, null};
+    public static final char[] BASIC_ASCII_NO_OUTSIDE_BORDER = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, '|', EMPTY,
+            EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
-    public static final Character[] FANCY_ASCII = {'╔', '═', '╤', '╗', '║', '│', '║',  '╠', '═',
+    public static final char[] FANCY_ASCII = {'╔', '═', '╤', '╗', '║', '│', '║',  '╠', '═',
             '╪', '╣', '║', '│', '║', '╟', '─', '┼', '╢', '╠', '═', '╪', '╣', '║', '│', '║', '╚', '═', '╧', '╝'};
 
 
-    static void writeTable(OutputStreamWriter osw, String lineSeparator, @Nullable Character[] border, Column[] rawColumns, @Nullable Object[][] data, @Nullable Styler styler, @Nullable Integer maxTableWidth) throws IOException {
+    static void writeTable(OutputStreamWriter osw, String lineSeparator, char[] border, Column[] rawColumns, @Nullable Object[][] data, @Nullable Styler styler, @Nullable Integer maxTableWidth) throws IOException {
         if (border.length != NO_BORDERS.length)
             throw new IllegalArgumentException("Border characters array must be exactly " + NO_BORDERS.length + " elements long");
 
@@ -53,7 +62,7 @@ public class AsciiTable {
         writeTable(osw, lineSeparator, border, columns, stringData, styler, maxTableWidth);
     }
 
-    private static void writeTable(OutputStreamWriter osw, String lineSeparator, @Nullable Character[] border, Column[] columns, @Nullable String[][] data, @Nullable Styler styler, @Nullable Integer maxTableWidth) throws IOException {
+    private static void writeTable(OutputStreamWriter osw, String lineSeparator, char[] border, Column[] columns, @Nullable String[][] data, @Nullable Styler styler, @Nullable Integer maxTableWidth) throws IOException {
         int[] colWidths = getColWidths(columns, data, border, maxTableWidth);
         OverflowBehaviour[] overflows = Arrays.stream(columns).map(Column::getOverflowBehaviour).toArray(OverflowBehaviour[]::new);
         boolean insertNewline = writeLine(osw, colWidths, border[0], border[1], border[2], border[3]);
@@ -90,19 +99,19 @@ public class AsciiTable {
                     styler == null ? null : (col, rows) -> styler.styleFooter(columns[col], col, rows));
         }
 
-        if (border[26] != null) osw.write(lineSeparator);
+        if (border[26] != EMPTY) osw.write(lineSeparator);
         writeLine(osw, colWidths, border[25], border[26], border[27], border[28]);
     }
 
     /** Returns a line/border row in the resulting table */
-    private static boolean writeLine(OutputStreamWriter osw, int[] colWidths, @Nullable Character left, @Nullable Character middle, @Nullable Character columnSeparator, @Nullable Character right) throws IOException {
-        if (middle == null) return false;
-        if (left != null) osw.append(left);
+    private static boolean writeLine(OutputStreamWriter osw, int[] colWidths, char left, char middle, char columnSeparator, char right) throws IOException {
+        if (middle == EMPTY) return false;
+        if (left != EMPTY) osw.append(left);
         for (int col = 0; col < colWidths.length; col++) {
             writeRepeated(osw, middle, colWidths[col]);
-            if (columnSeparator != null && col != colWidths.length - 1) osw.write(columnSeparator);
+            if (columnSeparator != EMPTY && col != colWidths.length - 1) osw.write(columnSeparator);
         }
-        if (right != null) osw.append(right);
+        if (right != EMPTY) osw.append(right);
         return true;
     }
 
@@ -114,7 +123,7 @@ public class AsciiTable {
      */
     @SuppressWarnings("deprecated")
     private static void writeData(OutputStreamWriter osw, int[] colWidths, OverflowBehaviour[] overflows, HorizontalAlign[] horizontalAligns,
-                                   @Nullable String[] contents, @Nullable Character left, @Nullable Character columnSeparator, @Nullable Character right, String lineSeparator,
+                                   @Nullable String[] contents, char left, char columnSeparator, char right, String lineSeparator,
                                   @Nullable BiFunction<Integer, List<String>, List<String>> styler) throws IOException {
         List<List<String>> linesContents = IntStream.range(0, colWidths.length)
                 .mapToObj(i -> {
@@ -154,21 +163,21 @@ public class AsciiTable {
                 .collect(Collectors.toList());
 
         for (int line = 0; line < numLines; line++) {
-            if (left != null) osw.append(left);
+            if (left != EMPTY) osw.append(left);
             for (int col = 0; col < colWidths.length; col++) {
                 if (justifiedLinesContents == null) {
                     String item = linesContents.get(col).size() <= line ? "" : linesContents.get(col).get(line);
                     writeJustified(osw, item, horizontalAligns[col], colWidths[col], PADDING);
                 } else osw.write(justifiedLinesContents.get(col).get(line));
-                if (columnSeparator != null && col != colWidths.length - 1) osw.write(columnSeparator);
+                if (columnSeparator != EMPTY && col != colWidths.length - 1) osw.write(columnSeparator);
             }
-            if (right != null) osw.append(right);
+            if (right != EMPTY) osw.append(right);
             if (line < numLines - 1) osw.write(lineSeparator);
         }
     }
 
     /** Returns the width of each column in the resulting table */
-    static int[] getColWidths(Column[] columns, @Nullable String[][] data, @Nullable Character[] border, @Nullable Integer maxTableWidth) {
+    static int[] getColWidths(Column[] columns, @Nullable String[][] data, char[] border, @Nullable Integer maxTableWidth) {
         int[] result = new int[columns.length];
         String current;
 
@@ -203,7 +212,7 @@ public class AsciiTable {
             totalCurrentWidth += result[i];
         }
 
-        int borderWidth = (border[4] != null ? 1 : 0) + (border[6] != null ? 1 : 0) + (border[5] != null ? columns.length - 1 : 0);
+        int borderWidth = (border[4] != EMPTY? 1 : 0) + (border[6] != EMPTY? 1 : 0) + (border[5] != EMPTY? columns.length - 1 : 0);
         if (totalCurrentWidth + borderWidth <= maxTableWidth)
             return result;
 
@@ -302,7 +311,7 @@ public class AsciiTable {
         return builder().data(objects, columns).asString();
     }
 
-    public static <T extends @Nullable Object> String getTable(@Nullable Character[] border, Collection<T> objects, List<ColumnData<T>> columns) {
+    public static <T extends @Nullable Object> String getTable(char[] border, Collection<T> objects, List<ColumnData<T>> columns) {
         return builder().data(objects, columns).border(border).asString();
     }
 
@@ -318,7 +327,7 @@ public class AsciiTable {
         return builder().header(header).footer(footer).data(data).asString();
     }
 
-    public static String getTable(@Nullable Character[] border, @Nullable String @Nullable[] header, @Nullable String @Nullable[] footer, @Nullable Object[][] data) {
+    public static String getTable(char[] border, @Nullable String @Nullable[] header, @Nullable String @Nullable[] footer, @Nullable Object[][] data) {
         return builder().header(header).footer(footer).border(border).data(data).asString();
     }
 
@@ -326,7 +335,7 @@ public class AsciiTable {
         return builder().data(columns, data).asString();
     }
 
-    public static String getTable(@Nullable Character[] border, Column @Nullable[] rawColumns, @Nullable Object[][] data) {
+    public static String getTable(char[] border, Column @Nullable[] rawColumns, @Nullable Object[][] data) {
         return builder().data(rawColumns, data).border(border).asString();
     }
 
