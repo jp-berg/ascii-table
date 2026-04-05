@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @NullMarked
-final class TableData {
+public final class TableData {
 
     final String[] header;
     final String[][] data;
@@ -19,7 +19,7 @@ final class TableData {
       this.data = data;
     }
 
-    AsciiTableBuilder populate(AsciiTableBuilder b) {
+    public AsciiTableBuilder populate(AsciiTableBuilder b) {
         return b.header(header).data(data);
     }
 }

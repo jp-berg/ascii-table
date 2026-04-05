@@ -24,7 +24,7 @@ public class ExecutionPlan {
 
     private List<TableData> storedElements;
 
-    TableData next(){
+    public TableData next(){
         TableData d = storedElements.get(currentPos);
         currentPos++;
         if(currentPos == noStoredElements) currentPos = 0;
