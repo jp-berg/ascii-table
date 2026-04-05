@@ -21,31 +21,138 @@ public class AsciiTable {
     private static final int PADDING = 1;
     private static final char ELLIPSIS = '…';
 
+    /**
+     * Example:
+     * <pre>
+     *     Name    Diameter  Mass  Atmosphere
+     *  1  Mercury   0.382    0.06              minimal
+     *  2    Venus   0.949    0.82     Carbon dioxide, Nitrogen
+     *  3    Earth   1.000    1.00      Nitrogen, Oxygen, Argon
+     *  4     Mars   0.532    0.11  Carbon dioxide, Nitrogen, Argon
+     *     Average   0.716    0.50
+     * </pre>
+     */
     public static final char EMPTY = 0;
 
     public static final char[] NO_BORDERS = new char[29];
 
-    static {
-        char[] c = new char[1];
-        if(EMPTY != c[0]){
-            throw new RuntimeException("Oh");
-        }
-    }
-
+    /**
+     * Example:
+     * <pre>
+     * +---+---------+----------+------+---------------------------------+
+     * |   |  Name   | Diameter | Mass | Atmosphere                      |
+     * +---+---------+----------+------+---------------------------------+
+     * | 1 | Mercury |  0.382   | 0.06 |             minimal             |
+     * +---+---------+----------+------+---------------------------------+
+     * | 2 |   Venus |  0.949   | 0.82 |    Carbon dioxide, Nitrogen     |
+     * +---+---------+----------+------+---------------------------------+
+     * | 3 |   Earth |  1.000   | 1.00 |     Nitrogen, Oxygen, Argon     |
+     * +---+---------+----------+------+---------------------------------+
+     * | 4 |    Mars |  0.532   | 0.11 | Carbon dioxide, Nitrogen, Argon |
+     * +---+---------+----------+------+---------------------------------+
+     * |   | Average |  0.716   | 0.50 |                                 |
+     * +---+---------+----------+------+---------------------------------+
+     * </pre>
+     */
     public static final char[] BASIC_ASCII = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
             '+', '+', '|', '|', '|', '+', '-', '+', '+', '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
 
+    /**
+     * Example:
+     * <pre>
+     * +---+---------+----------+------+---------------------------------+
+     * |   |  Name   | Diameter | Mass | Atmosphere                      |
+     * +---+---------+----------+------+---------------------------------+
+     * | 1 | Mercury |  0.382   | 0.06 |             minimal             |
+     * | 2 |   Venus |  0.949   | 0.82 |    Carbon dioxide, Nitrogen     |
+     * | 3 |   Earth |  1.000   | 1.00 |     Nitrogen, Oxygen, Argon     |
+     * | 4 |    Mars |  0.532   | 0.11 | Carbon dioxide, Nitrogen, Argon |
+     * +---+---------+----------+------+---------------------------------+
+     * |   | Average |  0.716   | 0.50 |                                 |
+     * +---+---------+----------+------+---------------------------------+
+     * </pre>
+     */
     public static final char[] BASIC_ASCII_NO_DATA_SEPARATORS = {'+', '-', '+', '+', '|', '|', '|', '+', '-',
             '+', '+', '|', '|', '|', EMPTY, EMPTY, EMPTY, EMPTY, '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
 
+    /**
+     * Example:
+     * <pre>
+     *    |  Name   | Diameter | Mass | Atmosphere
+     * ---+---------+----------+------+---------------------------------
+     *  1 | Mercury |  0.382   | 0.06 |             minimal
+     *  2 |   Venus |  0.949   | 0.82 |    Carbon dioxide, Nitrogen
+     *  3 |   Earth |  1.000   | 1.00 |     Nitrogen, Oxygen, Argon
+     *  4 |    Mars |  0.532   | 0.11 | Carbon dioxide, Nitrogen, Argon
+     * ---+---------+----------+------+---------------------------------
+     *    | Average |  0.716   | 0.50 |
+     * </pre>
+     */
     public static final char[] BASIC_ASCII_NO_DATA_SEPARATORS_NO_OUTSIDE_BORDER = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
             '|', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
+    /**
+     * Example:
+     * <pre>
+     *    |  Name   | Diameter | Mass | Atmosphere
+     * ---+---------+----------+------+---------------------------------
+     *  1 | Mercury |  0.382   | 0.06 |             minimal
+     * ---+---------+----------+------+---------------------------------
+     *  2 |   Venus |  0.949   | 0.82 |    Carbon dioxide, Nitrogen
+     * ---+---------+----------+------+---------------------------------
+     *  3 |   Earth |  1.000   | 1.00 |     Nitrogen, Oxygen, Argon
+     * ---+---------+----------+------+---------------------------------
+     *  4 |    Mars |  0.532   | 0.11 | Carbon dioxide, Nitrogen, Argon
+     * ---+---------+----------+------+---------------------------------
+     *    | Average |  0.716   | 0.50 |
+     * </pre>
+     */
     public static final char[] BASIC_ASCII_NO_OUTSIDE_BORDER = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, '|', EMPTY,
             EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '-', '+', EMPTY, EMPTY, '|', EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
+    /**
+     * Example:
+     * <pre>
+     * ╔═══╤═════════╤══════════╤══════╤═════════════════════════════════╗
+     * ║   │  Name   │ Diameter │ Mass │ Atmosphere                      ║
+     * ╠═══╪═════════╪══════════╪══════╪═════════════════════════════════╣
+     * ║ 1 │ Mercury │  0.382   │ 0.06 │             minimal             ║
+     * ╟───┼─────────┼──────────┼──────┼─────────────────────────────────╢
+     * ║ 2 │   Venus │  0.949   │ 0.82 │    Carbon dioxide, Nitrogen     ║
+     * ╟───┼─────────┼──────────┼──────┼─────────────────────────────────╢
+     * ║ 3 │   Earth │  1.000   │ 1.00 │     Nitrogen, Oxygen, Argon     ║
+     * ╟───┼─────────┼──────────┼──────┼─────────────────────────────────╢
+     * ║ 4 │    Mars │  0.532   │ 0.11 │ Carbon dioxide, Nitrogen, Argon ║
+     * ╠═══╪═════════╪══════════╪══════╪═════════════════════════════════╣
+     * ║   │ Average │  0.716   │ 0.50 │                                 ║
+     * ╚═══╧═════════╧══════════╧══════╧═════════════════════════════════╝
+     * </pre>
+     */
     public static final char[] FANCY_ASCII = {'╔', '═', '╤', '╗', '║', '│', '║',  '╠', '═',
             '╪', '╣', '║', '│', '║', '╟', '─', '┼', '╢', '╠', '═', '╪', '╣', '║', '│', '║', '╚', '═', '╧', '╝'};
+
+    /**
+     * Example:
+     * <pre>
+     * +---+---------+----------+------+---------------------------------+
+     * |   | Name    | Diameter | Mass | Atmosphere                      |
+     * +===+=========+==========+======+=================================+
+     * | 1 | Mercury |    0.382 | 0.06 |                         minimal |
+     * +---+---------+----------+------+---------------------------------+
+     * | 2 |   Venus |    0.949 | 0.82 |        Carbon dioxide, Nitrogen |
+     * +---+---------+----------+------+---------------------------------+
+     * | 3 |   Earth |    1.000 | 1.00 |         Nitrogen, Oxygen, Argon |
+     * +---+---------+----------+------+---------------------------------+
+     * | 4 |    Mars |    0.532 | 0.11 | Carbon dioxide, Nitrogen, Argon |
+     * +---+---------+----------+------+---------------------------------+
+     * |   | Average | 0.716    | 0.50 |                                 |
+     * +---+---------+----------+------+---------------------------------+
+     * </pre>
+     *
+     * @see <a href="https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#tables">reStructuredText Markup Specification</a>
+     */
+    public static final Character[] RE_STRUCTURED_TEXT = {'+', '-', '+', '+', '|', '|', '|', '+', '=',
+            '+', '+', '|', '|', '|', '+', '-', '+', '+', '+', '-', '+', '+', '|', '|', '|', '+', '-', '+', '+'};
 
 
     static void writeTable(OutputStreamWriter osw, String lineSeparator, char[] border, Column[] rawColumns, @Nullable Object[][] data, @Nullable Styler styler, @Nullable Integer maxTableWidth) throws IOException {
