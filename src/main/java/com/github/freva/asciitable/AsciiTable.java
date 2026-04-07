@@ -388,11 +388,8 @@ public class AsciiTable {
     private static void writeRepeated(OutputStreamWriter osw, char c, int num) throws IOException {
         char[] array = new char[num];
         Arrays.fill(array, c);
-        CharBuffer b = CharBuffer.wrap(array);
-        osw.append(b);
+        osw.write(array);
     }
-
-
 
     private static @Nullable String[][] objectArrayToString(Column[] columns, @Nullable Object [][] array) {
         int[] numInvisible = new int[Math.max(1, columns.length)];
